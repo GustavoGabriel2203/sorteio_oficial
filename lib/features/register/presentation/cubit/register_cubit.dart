@@ -1,27 +1,44 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
 import 'package:sorteio_oficial/features/register/data/models/customer_register_model.dart';
 import 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(RegisterInitial());
+  final CustomerDao customerDao;
+
+  RegisterCubit(this.customerDao) : super(RegisterInitial());
 
   Future<void> register(CustomerRegister customer) async {
     emit(RegisterLoading());
 
     try {
-      // Simula delay como se fosse um envio real
-      await Future.delayed(const Duration(seconds: 1));
+      // Verifica se o e-mail já foi usado no mesmo evento
+      final existing = await customerDao.validateIfCustomerAlreadyExists(
+        customer.email,
+        customer.event,
+      );
 
-      // Simula verificação simples
-      if (customer.email == 'teste@teste.com') {
+      if (existing != null) {
         emit(RegisterError('Email já está em uso.'));
         return;
       }
 
-      // Simulação de sucesso
+      // Cria um ID simples baseado na data/hora
+      final newId = DateTime.now().millisecondsSinceEpoch;
+
+      // Converte para entidade
+      final entity = customer.toEntity(
+        id: newId,
+        sorted: 0,
+        sync: 0,
+        company: '', // ajuste conforme necessidade
+      );
+
+      // Salva no banco
+      await customerDao.insertCustomer(entity);
+
       emit(RegisterSuccess());
 
-      // Retorna ao estado inicial após um tempo (opcional)
       await Future.delayed(const Duration(seconds: 2));
       emit(RegisterInitial());
     } catch (e) {

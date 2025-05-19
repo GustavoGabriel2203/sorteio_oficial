@@ -7,6 +7,7 @@ import 'package:sorteio_oficial/features/register/data/models/customer_register_
 import 'package:sorteio_oficial/features/register/presentation/cubit/register_cubit.dart';
 import 'package:sorteio_oficial/features/register/presentation/cubit/register_state.dart';
 import 'package:sorteio_oficial/features/register/presentation/pages/decorationtextfield.dart';
+import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart'; // necessário para acessar o id
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -27,11 +28,20 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _submitForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
+      final eventId = context.read<ValidatorCubit>().currentWhitelabelID;
+
+      if (eventId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Evento não validado!')),
+        );
+        return;
+      }
+
       final customer = CustomerRegister(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
         phone: phoneController.text.trim(),
-        event: 1, // <- ID do evento fixo por enquanto (pode vir de sessão depois)
+        event: eventId,
       );
 
       context.read<RegisterCubit>().register(customer);

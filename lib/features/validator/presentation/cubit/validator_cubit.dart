@@ -5,7 +5,11 @@ import 'validator_state.dart';
 class ValidatorCubit extends Cubit<ValidatorState> {
   final WhitelabelRepository repository;
 
+  int? _whitelabelId;
+
   ValidatorCubit(this.repository) : super(ValidatorInitial());
+
+int? get currentWhitelabelID => _whitelabelId;
 
   Future<void> validateAccessCode(String accessCode) async {
     emit(ValidatorLoading());
@@ -15,6 +19,7 @@ class ValidatorCubit extends Cubit<ValidatorState> {
       if (result == null) {
         emit(const ValidatorError('Código de acesso inválido ou não encontrado.'));
       } else {
+        _whitelabelId = result.data.eventId; // guardando o id
         emit(ValidatorSuccess(result));
       }
     } catch (e) {
