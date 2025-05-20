@@ -4,18 +4,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Rotas da aplicação
 import 'package:sorteio_oficial/config/routes/app_routes.dart';
 
-// Banco de dados e DAO
+// Banco de dados e DAOs
 import 'package:sorteio_oficial/core/database/app_database.dart';
 import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
+import 'package:sorteio_oficial/core/database/dao/whitelabel_dao.dart';
+import 'package:sorteio_oficial/features/participants/data/repository/participants_repository.dart';
+import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
+
+// Repositórios e serviços
 import 'package:sorteio_oficial/features/register/data/repository/customer_registration.dart';
-
-// Cubits e Serviços
-import 'package:sorteio_oficial/features/register/presentation/cubit/register_cubit.dart';
-
-import 'package:sorteio_oficial/features/events/presentation/cubit/event_cubit.dart';
 import 'package:sorteio_oficial/features/events/data/repository/event_repository.dart';
-import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
 import 'package:sorteio_oficial/features/validator/data/repositories/whitelabel_repository.dart';
+
+// Cubits
+import 'package:sorteio_oficial/features/register/presentation/cubit/register_cubit.dart';
+import 'package:sorteio_oficial/features/events/presentation/cubit/event_cubit.dart';
+import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,34 +29,62 @@ void main() async {
       .databaseBuilder('Customer_database.db')
       .build();
 
-  // Recupera o DAO para clientes
+  // Recupera os DAOs
   final customerDao = database.customerDao;
+  final whitelabelDao = database.whitelabelDao;
 
-  // Executa o app, passando o DAO
-  runApp(MyApp(customerDao: customerDao));
+  // Instância do serviço de participantes com base no DAO
+  final participantService = ParticipantService(whitelabelDao);
+
+  runApp(MyApp(
+    customerDao: customerDao,
+    whitelabelDao: whitelabelDao,
+    participantService: participantService,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final CustomerDao customerDao;
+  final WhitelabelDao whitelabelDao;
+  final ParticipantService participantService;
 
-  const MyApp({super.key, required this.customerDao});
+  const MyApp({
+    super.key,
+    required this.customerDao,
+    required this.whitelabelDao,
+    required this.participantService,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         // Cubit para validação de whitelabel
-        BlocProvider(create: (_) => ValidatorCubit(WhitelabelRepository())),
+        BlocProvider(
+          create: (_) => ValidatorCubit(
+            WhitelabelRepository(),
+            whitelabelDao,
+          ),
+        ),
 
         // Cubit para listar eventos da API
-        BlocProvider(create: (_) => EventCubit(RemoteEventService())),
+        BlocProvider(
+          create: (_) => EventCubit(
+            RemoteEventService(),
+          ),
+        ),
 
-        // Cubit de cadastro, com DAO local + serviço remoto de clientes
+        // Cubit de cadastro de cliente
         BlocProvider(
           create: (_) => RegisterCubit(
             customerDao: customerDao,
-            remoteService: RemoteCustomerService(), // CORRETO AQUI
+            remoteService: RemoteCustomerService(),
           ),
+        ),
+
+        // Cubit para listar participantes da API
+        BlocProvider(
+          create: (_) => ParticipantCubit(participantService),
         ),
       ],
       child: MaterialApp(

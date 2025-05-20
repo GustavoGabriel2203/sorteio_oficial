@@ -74,13 +74,15 @@ class _$AppDatabase extends AppDatabase {
 
   CustomerDao? _customerDaoInstance;
 
+  WhitelabelDao? _whitelabelDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -97,6 +99,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Customers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `phone` TEXT NOT NULL, `sorted` INTEGER NOT NULL, `event` INTEGER NOT NULL, `sync` INTEGER NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `Whitelabels` (`id` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -107,6 +111,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   CustomerDao get customerDao {
     return _customerDaoInstance ??= _$CustomerDao(database, changeListener);
+  }
+
+  @override
+  WhitelabelDao get whitelabelDao {
+    return _whitelabelDaoInstance ??= _$WhitelabelDao(database, changeListener);
   }
 }
 
@@ -242,5 +251,39 @@ class _$CustomerDao extends CustomerDao {
   @override
   Future<void> updateCustomer(Customer customer) async {
     await _customerUpdateAdapter.update(customer, OnConflictStrategy.abort);
+  }
+}
+
+class _$WhitelabelDao extends WhitelabelDao {
+  _$WhitelabelDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _whitelabelInsertionAdapter = InsertionAdapter(database, 'Whitelabels',
+            (Whitelabel item) => <String, Object?>{'id': item.id});
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Whitelabel> _whitelabelInsertionAdapter;
+
+  @override
+  Future<Whitelabel?> getWhitelabel() async {
+    return _queryAdapter.query('SELECT * FROM Whitelabels LIMIT 1',
+        mapper: (Map<String, Object?> row) => Whitelabel(id: row['id'] as int));
+  }
+
+  @override
+  Future<void> clearWhitelabel() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Whitelabels');
+  }
+
+  @override
+  Future<void> insertWhitelabel(Whitelabel whitelabel) async {
+    await _whitelabelInsertionAdapter.insert(
+        whitelabel, OnConflictStrategy.replace);
   }
 }

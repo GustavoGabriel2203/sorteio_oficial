@@ -38,7 +38,9 @@ class MenuPage extends StatelessWidget {
               // Botão 2
               MenuButton(
                 label: 'Lista de Participantes',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.participants);
+                },
               ),
 
               // Botão 3

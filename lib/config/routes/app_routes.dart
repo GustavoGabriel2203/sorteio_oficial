@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sorteio_oficial/features/events/presentation/pages/event_page.dart';
 import 'package:sorteio_oficial/features/menu/presentation/pages/menu_page.dart';
+import 'package:sorteio_oficial/features/participants/presentation/pages/participants_page.dart';
 import 'package:sorteio_oficial/features/register/presentation/pages/register_page.dart';
 import 'package:sorteio_oficial/features/validator/presentation/pages/validator_whitelabel_page.dart';
 
@@ -9,6 +10,7 @@ abstract class AppRoutes {
   static const event = '/event';
   static const menu = '/menu';
   static const register = '/register';
+  static const participants = '/participants';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -26,6 +28,9 @@ abstract class AppRoutes {
 
       case register:
         return MaterialPageRoute(builder: (_) => RegisterPage());
+
+      case participants:
+        return MaterialPageRoute(builder: (_) => ParticipantsPage());
 
      
 
