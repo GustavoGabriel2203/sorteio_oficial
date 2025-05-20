@@ -1,3 +1,4 @@
+// imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
@@ -12,14 +13,13 @@ class RafflePage extends StatefulWidget {
 }
 
 class _RafflePageState extends State<RafflePage> {
-
+  @override
+  void initState() {
+    super.initState();
+    context.read<ParticipantCubit>().fetchParticipants();
+  }
 
   @override
-void initState() {
-  super.initState();
-  context.read<ParticipantCubit>().fetchParticipants();
-}
-@override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0FFF0),
@@ -33,6 +33,18 @@ void initState() {
             if (state is RaffleSynced) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Participantes sincronizados com sucesso!')),
+              );
+            } else if (state is RaffleSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('🎉 Vencedor: ${state.winnerName}')),
+              );
+            } else if (state is RaffleEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Todos os participantes já foram sorteados.')),
+              );
+            } else if (state is RaffleCleaned) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Banco de participantes limpo com sucesso.')),
               );
             } else if (state is RaffleError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -71,6 +83,57 @@ void initState() {
                       textStyle: const TextStyle(fontSize: 16),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: state is RaffleLoading
+                        ? null
+                        : () => context.read<RaffleCubit>().sortear(),
+                    icon: const Icon(Icons.casino),
+                    label: Text(
+                      state is RaffleLoading ? 'Sorteando...' : 'Sortear participante',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[800],
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () => context.read<RaffleCubit>().limparBanco(),
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Limpar participantes'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[600],
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  if (state is RaffleSuccess)
+                    Column(
+                      children: [
+                        const Text(
+                          '🏆 Vencedor',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          state.winnerName,
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[900],
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             );
