@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Customers` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `phone` TEXT NOT NULL, `company` TEXT NOT NULL, `sorted` INTEGER NOT NULL, `event` INTEGER NOT NULL, `sync` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Customers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `email` TEXT NOT NULL, `phone` TEXT NOT NULL, `sorted` INTEGER NOT NULL, `event` INTEGER NOT NULL, `sync` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -123,7 +123,6 @@ class _$CustomerDao extends CustomerDao {
                   'name': item.name,
                   'email': item.email,
                   'phone': item.phone,
-                  'company': item.company,
                   'sorted': item.sorted,
                   'event': item.event,
                   'sync': item.sync
@@ -141,11 +140,10 @@ class _$CustomerDao extends CustomerDao {
   Future<List<Customer>> getCustomers() async {
     return _queryAdapter.queryList('SELECT * FROM Customers',
         mapper: (Map<String, Object?> row) => Customer(
-            id: row['id'] as int,
+            id: row['id'] as int?,
             name: row['name'] as String,
             email: row['email'] as String,
             phone: row['phone'] as String,
-            company: row['company'] as String,
             sorted: row['sorted'] as int,
             event: row['event'] as int,
             sync: row['sync'] as int));
@@ -155,11 +153,10 @@ class _$CustomerDao extends CustomerDao {
   Future<Customer?> getCustomerById(int id) async {
     return _queryAdapter.query('SELECT * FROM Customers WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Customer(
-            id: row['id'] as int,
+            id: row['id'] as int?,
             name: row['name'] as String,
             email: row['email'] as String,
             phone: row['phone'] as String,
-            company: row['company'] as String,
             sorted: row['sorted'] as int,
             event: row['event'] as int,
             sync: row['sync'] as int),
@@ -174,11 +171,10 @@ class _$CustomerDao extends CustomerDao {
     return _queryAdapter.query(
         'SELECT * FROM Customers WHERE email = ?1 AND event = ?2',
         mapper: (Map<String, Object?> row) => Customer(
-            id: row['id'] as int,
+            id: row['id'] as int?,
             name: row['name'] as String,
             email: row['email'] as String,
             phone: row['phone'] as String,
-            company: row['company'] as String,
             sorted: row['sorted'] as int,
             event: row['event'] as int,
             sync: row['sync'] as int),

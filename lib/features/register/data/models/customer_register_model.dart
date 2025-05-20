@@ -1,5 +1,6 @@
 import 'package:sorteio_oficial/core/entitys/customer_entity.dart';
 
+
 class CustomerRegister {
   final String name;
   final String email;
@@ -33,17 +34,16 @@ class CustomerRegister {
 
   /// Conversão para a entidade `Customer` do banco de dados
   Customer toEntity({
-    required int id,
+    int? id, 
     int sorted = 0,
     int sync = 0,
     String company = '',
   }) {
     return Customer(
-      id: id,
+      id : id,
       name: name,
       email: email,
       phone: phone,
-      company: company,
       sorted: sorted,
       event: event,
       sync: sync,

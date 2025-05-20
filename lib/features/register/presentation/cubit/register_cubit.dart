@@ -23,15 +23,10 @@ class RegisterCubit extends Cubit<RegisterState> {
         return;
       }
 
-      // Cria um ID simples baseado na data/hora
-      final newId = DateTime.now().millisecondsSinceEpoch;
-
       // Converte para entidade
       final entity = customer.toEntity(
-        id: newId,
         sorted: 0,
         sync: 0,
-        company: '', // ajuste conforme necessidade
       );
 
       // Salva no banco
