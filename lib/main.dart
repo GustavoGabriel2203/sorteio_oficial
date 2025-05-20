@@ -8,18 +8,19 @@ import 'package:sorteio_oficial/config/routes/app_routes.dart';
 import 'package:sorteio_oficial/core/database/app_database.dart';
 import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
 import 'package:sorteio_oficial/core/database/dao/whitelabel_dao.dart';
-import 'package:sorteio_oficial/features/participants/data/repository/participants_repository.dart';
-import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
 
 // Repositórios e serviços
 import 'package:sorteio_oficial/features/register/data/repository/customer_registration.dart';
 import 'package:sorteio_oficial/features/events/data/repository/event_repository.dart';
 import 'package:sorteio_oficial/features/validator/data/repositories/whitelabel_repository.dart';
+import 'package:sorteio_oficial/features/participants/data/repository/participants_repository.dart';
 
 // Cubits
 import 'package:sorteio_oficial/features/register/presentation/cubit/register_cubit.dart';
 import 'package:sorteio_oficial/features/events/presentation/cubit/event_cubit.dart';
 import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
+import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
+import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +86,14 @@ class MyApp extends StatelessWidget {
         // Cubit para listar participantes da API
         BlocProvider(
           create: (_) => ParticipantCubit(participantService),
+        ),
+
+        // Cubit para lógica de sorteio (usa DAOs e participantCubit)
+        BlocProvider(
+          create: (context) => RaffleCubit(
+            customerDao: customerDao,
+            participantCubit: context.read<ParticipantCubit>(),
+          ),
         ),
       ],
       child: MaterialApp(

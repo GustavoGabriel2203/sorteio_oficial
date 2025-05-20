@@ -47,7 +47,7 @@ class MenuPage extends StatelessWidget {
               MenuButton(
                 label: 'Realizar Sorteio',
                 onPressed: () {
-                  // TODO: Implementar lógica futura
+                  Navigator.pushNamed(context, AppRoutes.rafflepage);
                 },
               ),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sorteio_oficial/features/draw/presentation/pages/raffle_page.dart';
 import 'package:sorteio_oficial/features/events/presentation/pages/event_page.dart';
 import 'package:sorteio_oficial/features/menu/presentation/pages/menu_page.dart';
 import 'package:sorteio_oficial/features/participants/presentation/pages/participants_page.dart';
@@ -11,6 +12,7 @@ abstract class AppRoutes {
   static const menu = '/menu';
   static const register = '/register';
   static const participants = '/participants';
+  static const rafflepage = '/rafle';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -32,6 +34,8 @@ abstract class AppRoutes {
       case participants:
         return MaterialPageRoute(builder: (_) => ParticipantsPage());
 
+      case rafflepage:
+        return MaterialPageRoute(builder: (_) => RafflePage());
      
 
       default:

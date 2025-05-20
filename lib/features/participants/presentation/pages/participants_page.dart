@@ -3,13 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_state.dart';
 
-class ParticipantsPage extends StatelessWidget {
+class ParticipantsPage extends StatefulWidget {
   const ParticipantsPage({super.key});
 
   @override
+  State<ParticipantsPage> createState() => _ParticipantsPageState();
+}
+
+class _ParticipantsPageState extends State<ParticipantsPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<ParticipantCubit>().fetchParticipants();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FFF0), // verde claro de fundo
+      backgroundColor: const Color(0xFFF0FFF0),
       appBar: AppBar(
         title: const Text('Participantes'),
         backgroundColor: Colors.green[700],
@@ -93,12 +104,6 @@ class ParticipantsPage extends StatelessWidget {
 
           return const SizedBox.shrink();
         },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.read<ParticipantCubit>().fetchParticipants(),
-        label: const Text('Atualizar'),
-        icon: const Icon(Icons.refresh),
-        backgroundColor: Colors.green[700],
       ),
     );
   }
