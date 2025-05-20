@@ -126,6 +126,19 @@ class _$CustomerDao extends CustomerDao {
                   'sorted': item.sorted,
                   'event': item.event,
                   'sync': item.sync
+                }),
+        _customerUpdateAdapter = UpdateAdapter(
+            database,
+            'Customers',
+            ['id'],
+            (Customer item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'email': item.email,
+                  'phone': item.phone,
+                  'sorted': item.sorted,
+                  'event': item.event,
+                  'sync': item.sync
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -135,6 +148,8 @@ class _$CustomerDao extends CustomerDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<Customer> _customerInsertionAdapter;
+
+  final UpdateAdapter<Customer> _customerUpdateAdapter;
 
   @override
   Future<List<Customer>> getCustomers() async {
@@ -205,7 +220,27 @@ class _$CustomerDao extends CustomerDao {
   }
 
   @override
+  Future<List<Customer>> getUnsyncedCustomersByEvent(int eventId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Customers WHERE event = ?1 AND sync = 0',
+        mapper: (Map<String, Object?> row) => Customer(
+            id: row['id'] as int?,
+            name: row['name'] as String,
+            email: row['email'] as String,
+            phone: row['phone'] as String,
+            sorted: row['sorted'] as int,
+            event: row['event'] as int,
+            sync: row['sync'] as int),
+        arguments: [eventId]);
+  }
+
+  @override
   Future<void> insertCustomer(Customer customer) async {
     await _customerInsertionAdapter.insert(customer, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCustomer(Customer customer) async {
+    await _customerUpdateAdapter.update(customer, OnConflictStrategy.abort);
   }
 }
