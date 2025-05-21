@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Adicionado
 import 'package:pinput/pinput.dart';
 import 'package:sorteio_oficial/features/events/presentation/pages/event_page.dart';
 import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
@@ -24,34 +25,34 @@ class _ValidatorPageState extends State<ValidatorPage> {
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 64,
-      textStyle: const TextStyle(
-        fontSize: 22,
+      width: 56.w,
+      height: 64.h,
+      textStyle: TextStyle(
+        fontSize: 22.sp,
         color: Colors.black87,
         fontWeight: FontWeight.w600,
       ),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.grey.shade300),
       ),
     );
 
     final focusedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration!.copyWith(
-        border: Border.all(color: const Color(0xFF66BB6A), width: 2),
+        border: Border.all(color: const Color(0xFF66BB6A), width: 2.w),
       ),
     );
 
     final errorPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration!.copyWith(
-        border: Border.all(color: Colors.red, width: 2),
+        border: Border.all(color: Colors.red, width: 2.w),
       ),
     );
 
     return Scaffold(
-      backgroundColor: Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: BlocConsumer<ValidatorCubit, ValidatorState>(
           listener: (context, state) {
@@ -82,29 +83,31 @@ class _ValidatorPageState extends State<ValidatorPage> {
             final isError = state is ValidatorError;
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 60),
-                  const Text(
+                  SizedBox(height: 60.h),
+                  Text(
                     'Verificação',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 50.sp,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Oswald',
                       letterSpacing: 1.2,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
+                  SizedBox(height: 12.h),
+                  Text(
                     'Digite o seu código de verificação',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 216, 214, 214)
-),
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      color: const Color.fromARGB(255, 216, 214, 214),
+                    ),
                   ),
-                  const SizedBox(height: 36),
+                  SizedBox(height: 36.h),
                   Pinput(
                     controller: codeController,
                     length: 6,
@@ -115,7 +118,7 @@ class _ValidatorPageState extends State<ValidatorPage> {
                     animationDuration: const Duration(milliseconds: 200),
                     showCursor: true,
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -123,26 +126,25 @@ class _ValidatorPageState extends State<ValidatorPage> {
                         final code = codeController.text.trim();
                         context.read<ValidatorCubit>().validateAccessCode(code);
                       },
-                      icon: const Icon(Icons.check_circle_outline),
-                      label: const Text(
+                      label: Text(
                         'Validar',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
                         backgroundColor: const Color(0xFF66BB6A),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                         elevation: 3,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  SizedBox(height: 60.h),
                 ],
               ),
             );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Adicionado
 import 'package:lottie/lottie.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_state.dart';
@@ -35,7 +36,7 @@ class _RaffleLoadingPageState extends State<RaffleLoadingPage> {
               children: [
                 Lottie.asset(
                   'assets/lottie/confetti.json',
-                  repeat: false,
+                  repeat: true,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,
@@ -43,32 +44,50 @@ class _RaffleLoadingPageState extends State<RaffleLoadingPage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      '🏆 Vencedor',
+                    Text(
+                      'Vencedor:',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 40.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
                       state.winnerName,
-                      style: const TextStyle(
-                        fontSize: 45,
+                      style: TextStyle(
+                        fontSize: 45.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.greenAccent,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 40),
+                    Text(
+                      state.winnerPhone,
+                      style: TextStyle(
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 40.h),
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.greenAccent,
                         foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 24.w,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                       ),
-                      child: const Text('Voltar'),
+                      child: Text(
+                        'Voltar',
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
                     ),
                   ],
                 ),
@@ -79,8 +98,8 @@ class _RaffleLoadingPageState extends State<RaffleLoadingPage> {
           return Center(
             child: Lottie.asset(
               'assets/lottie/loading.json',
-              width: 200,
-              height: 200,
+              width: double.infinity,
+              height: double.infinity,
               fit: BoxFit.contain,
             ),
           );

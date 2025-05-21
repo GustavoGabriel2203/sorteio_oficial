@@ -5,8 +5,9 @@ import 'package:sorteio_oficial/core/lucid_validator/lucid_model.dart';
 class UserValidator extends LucidValidator<LucidModel> {
 
 UserValidator(){
-    ruleFor((user) => user.name, key: 'name');
-
+    ruleFor((user) => user.name, key: 'name')
+    .notEmpty(message: 'Preencha um nome');
+    
     ruleFor((user) => user.phone, key: 'phone')
     .notEmpty(message: 'preencha um telefone')
     .validPhoneBR(message: 'Preencha um telefone valido')

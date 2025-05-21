@@ -92,7 +92,12 @@ class RaffleCubit extends Cubit<RaffleState> {
 
       emit(RaffleSuccess(winnerName: sorteado.name));
       await Future.delayed(const Duration(seconds: 4));
-      emit(RaffleShowWinner(winnerName: sorteado.name));
+
+      emit(RaffleShowWinner(
+
+        winnerName: sorteado.name,
+        winnerPhone: sorteado.phone,
+      ));
     } catch (e) {
       emit(RaffleError('Erro ao sortear: ${e.toString()}'));
     }

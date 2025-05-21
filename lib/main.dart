@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Rotas da aplicação
 import 'package:sorteio_oficial/config/routes/app_routes.dart';
@@ -96,10 +98,15 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: AppRoutes.generateRoute,
-        initialRoute: AppRoutes.validator,
+      child: ScreenUtilInit(
+        designSize: Size(360, 690),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: AppRoutes.generateRoute,
+          initialRoute: AppRoutes.validator,
+        ),
       ),
     );
   }
