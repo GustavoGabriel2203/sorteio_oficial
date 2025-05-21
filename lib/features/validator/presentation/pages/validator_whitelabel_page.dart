@@ -51,7 +51,7 @@ class _ValidatorPageState extends State<ValidatorPage> {
     );
 
     return Scaffold(
-      backgroundColor:  Color(0xFFFDFDFD),
+      backgroundColor: Color(0xFF121212),
       body: SafeArea(
         child: BlocConsumer<ValidatorCubit, ValidatorState>(
           listener: (context, state) {
@@ -94,14 +94,15 @@ class _ValidatorPageState extends State<ValidatorPage> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Oswald',
                       letterSpacing: 1.2,
-                      color: Colors.black87,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'Digite o seu código de verificação',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 15, color: Colors.black54),
+                    style: TextStyle(fontSize: 15, color: Color.fromARGB(255, 216, 214, 214)
+),
                   ),
                   const SizedBox(height: 36),
                   Pinput(
@@ -125,7 +126,10 @@ class _ValidatorPageState extends State<ValidatorPage> {
                       icon: const Icon(Icons.check_circle_outline),
                       label: const Text(
                         'Validar',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),

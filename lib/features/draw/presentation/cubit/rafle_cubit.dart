@@ -17,6 +17,7 @@ class RaffleCubit extends Cubit<RaffleState> {
 
   static const String dbName = 'Customer_database.db';
 
+  /// Sincroniza os participantes da API para o banco local
   Future<void> syncParticipantsToLocal() async {
     if (participantCubit.state is! ParticipantLoaded) {
       emit(RaffleError('Nenhum participante carregado.'));
@@ -62,6 +63,7 @@ class RaffleCubit extends Cubit<RaffleState> {
     }
   }
 
+  /// Realiza o sorteio de um participante ainda não sorteado
   Future<void> sortear() async {
     emit(RaffleLoading());
 
@@ -75,7 +77,6 @@ class RaffleCubit extends Cubit<RaffleState> {
       }
 
       final eventId = whitelabel.id;
-
       final all = await customerDao.getCustomers();
       final unsorted = all.where((c) => c.sorted == 0 && c.event == eventId).toList();
 
@@ -90,11 +91,14 @@ class RaffleCubit extends Cubit<RaffleState> {
       await customerDao.updateCustomerSorted(sorteado.id!);
 
       emit(RaffleSuccess(winnerName: sorteado.name));
+      await Future.delayed(const Duration(seconds: 4));
+      emit(RaffleShowWinner(winnerName: sorteado.name));
     } catch (e) {
       emit(RaffleError('Erro ao sortear: ${e.toString()}'));
     }
   }
 
+  /// Limpa todos os participantes do banco local
   Future<void> limparBanco() async {
     try {
       await customerDao.clearDatabase();

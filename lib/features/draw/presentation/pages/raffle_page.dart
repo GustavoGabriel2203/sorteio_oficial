@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_state.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
+import 'package:sorteio_oficial/features/draw/presentation/pages/raffle_loading_page.dart';
 
 class RafflePage extends StatefulWidget {
   const RafflePage({super.key});
@@ -23,10 +24,10 @@ class _RafflePageState extends State<RafflePage> {
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: Colors.black87),
+          style: const TextStyle(color: Colors.white),
           textAlign: TextAlign.center,
         ),
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.black87,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 3,
@@ -37,12 +38,16 @@ class _RafflePageState extends State<RafflePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDF6F9),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        title: const Text('Sorteio'),
+        title: const Text(
+          'Sorteio',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
-        backgroundColor: Color(0xFFEDF6F9),
-        elevation: 0,
+        backgroundColor: const Color(0xFF1E1E1E),
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: BlocConsumer<RaffleCubit, RaffleState>(
@@ -60,77 +65,105 @@ class _RafflePageState extends State<RafflePage> {
             }
           },
           builder: (context, state) {
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.emoji_events, size: 80, color: Colors.green),
+                  const Icon(Icons.emoji_events, size: 80, color: Colors.greenAccent),
                   const SizedBox(height: 16),
+                  const Text(
+                    'Antes de sortear, sincronize os participantes.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFFB0B0B0),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   const Text(
                     'Gerencie os participantes do sorteio',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 32),
 
                   // Botão: Sincronizar
-                  ElevatedButton.icon(
-                    onPressed: state is RaffleSyncing
-                        ? null
-                        : () => context.read<RaffleCubit>().syncParticipantsToLocal(),
-                    icon: const Icon(Icons.download),
-                    label: Text(
-                      state is RaffleSyncing ? 'Sincronizando...' : 'Sincronizar participantes',
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[200],
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: state is RaffleSyncing
+                          ? null
+                          : () => context.read<RaffleCubit>().syncParticipantsToLocal(),
+                      icon: const Icon(Icons.download, color: Colors.white),
+                      label: Text(
+                        state is RaffleSyncing ? 'Sincronizando...' : 'Sincronizar participantes',
+                        style: const TextStyle(color: Colors.white),
                       ),
-                      textStyle: const TextStyle(fontSize: 16),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[700],
+                        elevation: 2,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Botão: Sortear
-                  ElevatedButton.icon(
-                    onPressed: state is RaffleLoading
-                        ? null
-                        : () => context.read<RaffleCubit>().sortear(),
-                    icon: const Icon(Icons.casino),
-                    label: Text(
-                      state is RaffleLoading ? 'Sorteando...' : 'Sortear participante',
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightGreen[300],
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  // Botão: Sortear (com navegação para tela de loading)
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const RaffleLoadingPage()),
+                        );
+                      },
+                      icon: const Icon(Icons.casino, color: Colors.white),
+                      label: const Text(
+                        'Sortear participante',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      textStyle: const TextStyle(fontSize: 16),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightGreen[400],
+                        elevation: 2,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
                   // Botão: Limpar banco
-                  ElevatedButton.icon(
-                    onPressed: () => context.read<RaffleCubit>().limparBanco(),
-                    icon: const Icon(Icons.delete_outline),
-                    label: const Text('Limpar participantes'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[100],
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () => context.read<RaffleCubit>().limparBanco(),
+                      icon: const Icon(Icons.delete_outline, color: Colors.white),
+                      label: const Text(
+                        'Limpar participantes',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      textStyle: const TextStyle(fontSize: 16),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent.withOpacity(0.3),
+                        elevation: 2,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ),
 
@@ -141,7 +174,11 @@ class _RafflePageState extends State<RafflePage> {
                       children: [
                         const Text(
                           '🏆 Vencedor',
-                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -149,7 +186,7 @@ class _RafflePageState extends State<RafflePage> {
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green[900],
+                            color: Colors.greenAccent[400],
                           ),
                         ),
                       ],

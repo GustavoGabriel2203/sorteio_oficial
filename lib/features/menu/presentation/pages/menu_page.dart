@@ -8,7 +8,7 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDF6F9),
+      backgroundColor: Color(0xFF1E1E1E),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -21,7 +21,7 @@ class MenuPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 80,
                   fontFamily: 'Bebas',
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,

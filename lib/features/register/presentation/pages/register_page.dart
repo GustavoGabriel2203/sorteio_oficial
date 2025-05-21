@@ -51,9 +51,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDF6F9),
+      backgroundColor: Color(0xFF1E1E1E),
       appBar: AppBar(
-        backgroundColor: Color(0xFFEDF6F9),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xFF1E1E1E),
         title: const Text('Cadastro de cliente'),
         centerTitle: true,
       ),
@@ -88,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const Text(
                       'Realize seu cadastro',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontFamily: 'Bebas',
                         fontSize: 40,
                       ),

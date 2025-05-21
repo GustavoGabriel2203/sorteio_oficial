@@ -24,6 +24,15 @@ class RaffleSuccess extends RaffleState {
   List<Object> get props => [winnerName];
 }
 
+class RaffleShowWinner extends RaffleState {
+  final String winnerName;
+
+  const RaffleShowWinner({required this.winnerName});
+
+  @override
+  List<Object> get props => [winnerName];
+}
+
 class RaffleEmpty extends RaffleState {}
 
 class RaffleError extends RaffleState {

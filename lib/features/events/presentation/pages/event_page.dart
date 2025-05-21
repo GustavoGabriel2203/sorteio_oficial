@@ -23,10 +23,10 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDF6F9),
+      backgroundColor: Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: Color(0xFFEDF6F9),
-        title: const Text('Eventos'),
+        backgroundColor: Color(0xFF121212),
+        title: const Text('Eventos', style: TextStyle(color: Colors.white),),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
