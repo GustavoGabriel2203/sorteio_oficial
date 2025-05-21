@@ -6,45 +6,49 @@ import 'package:sorteio_oficial/features/validator/data/repositories/whitelabel_
 import 'validator_state.dart';
 
 class ValidatorCubit extends Cubit<ValidatorState> {
-  final WhitelabelRepository repository; // acessa a API
-  final WhitelabelDao whitelabelDao;     // acessa o banco local
+  final WhitelabelRepository repository;
+  final WhitelabelDao whitelabelDao;
 
-  int? _whitelabelId; // ID do whitelabel validado (armazenado em memória)
+  int? _whitelabelId;
 
-  // Construtor recebe repositório e DAO
   ValidatorCubit(this.repository, this.whitelabelDao)
       : super(ValidatorInitial());
 
-  // Getter para acessar o ID atual validado (usado em outras telas)
   int? get currentWhitelabelID => _whitelabelId;
 
-  // Método chamado ao submeter o código de acesso
-  Future<void> validateAccessCode(String accessCode) async {
-    emit(ValidatorLoading()); // Estado de carregamento → exibe spinner na UI
+  Future<void> validateAccessCode(String code) async {
+    // Validação local: 6 dígitos
+    if (code.length != 6) {
+      emit(const ValidatorError('O código precisa ter 6 dígitos!'));
+      await Future.delayed(const Duration(seconds: 2));
+      emit(ValidatorInitial());
+      return;
+    }
+
+    emit(ValidatorLoading());
 
     try {
-      // Busca o whitelabel correspondente ao código informado
-      final result = await repository.getWhitelabel(accessCode);
+      final result = await repository.getWhitelabel(code);
 
       if (result == null) {
-        // Código inválido ou não encontrado
         emit(const ValidatorError('Código de acesso inválido ou não encontrado.'));
-      } else {
-        // Armazena o ID do evento (whitelabel) em memória
-        _whitelabelId = result.data.eventId;
-
-        // Salva o ID também no banco local (tabela Whitelabels)
-        await whitelabelDao.clearWhitelabel(); // Remove entradas anteriores
-        await whitelabelDao.insertWhitelabel(
-          Whitelabel(id: _whitelabelId!),
-        );
-
-        // Emite sucesso para continuar a navegação
-        emit(ValidatorSuccess(result));
+        await Future.delayed(const Duration(seconds: 3));
+        emit(ValidatorInitial());
+        return;
       }
+
+      _whitelabelId = result.data.eventId;
+
+      await whitelabelDao.clearWhitelabel();
+      await whitelabelDao.insertWhitelabel(
+        Whitelabel(id: _whitelabelId!),
+      );
+
+      emit(ValidatorSuccess(result));
     } catch (e) {
-      // Qualquer erro inesperado (API, conexão etc.)
       emit(ValidatorError('Erro ao validar código: ${e.toString()}'));
+      await Future.delayed(const Duration(seconds: 3));
+      emit(ValidatorInitial());
     }
   }
 }

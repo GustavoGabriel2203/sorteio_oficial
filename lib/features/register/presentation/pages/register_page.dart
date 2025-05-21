@@ -31,9 +31,9 @@ class _RegisterPageState extends State<RegisterPage> {
       final eventId = context.read<ValidatorCubit>().currentWhitelabelID;
 
       if (eventId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Evento não validado!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Evento não validado!')));
         return;
       }
 
@@ -51,8 +51,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      appBar: AppBar(title: const Text('Cadastro de cliente')),
+      backgroundColor: Color(0xFFEDF6F9),
+      appBar: AppBar(
+        backgroundColor: Color(0xFFEDF6F9),
+        title: const Text('Cadastro de cliente'),
+        centerTitle: true,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
@@ -71,9 +75,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   );
                 } else if (state is RegisterError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               child: Form(

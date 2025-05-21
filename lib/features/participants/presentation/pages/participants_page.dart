@@ -20,10 +20,11 @@ class _ParticipantsPageState extends State<ParticipantsPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FFF0),
+      backgroundColor: const Color(0xFFFAFAFA),
       appBar: AppBar(
         title: const Text('Participantes'),
-        backgroundColor: Colors.green[700],
+        centerTitle: true,
+        backgroundColor: Colors.green[400],
         elevation: 1,
       ),
       body: BlocBuilder<ParticipantCubit, ParticipantState>(

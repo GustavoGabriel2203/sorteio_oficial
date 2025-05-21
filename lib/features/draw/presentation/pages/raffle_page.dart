@@ -1,4 +1,3 @@
-// imports
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
@@ -19,53 +18,63 @@ class _RafflePageState extends State<RafflePage> {
     context.read<ParticipantCubit>().fetchParticipants();
   }
 
+  void showSnack(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.black87),
+          textAlign: TextAlign.center,
+        ),
+        backgroundColor: Colors.grey[200],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 3,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0FFF0),
+      backgroundColor: Color(0xFFEDF6F9),
       appBar: AppBar(
         title: const Text('Sorteio'),
-        backgroundColor: Colors.green[700],
+        centerTitle: true,
+        backgroundColor: Color(0xFFEDF6F9),
+        elevation: 0,
       ),
       body: Center(
         child: BlocConsumer<RaffleCubit, RaffleState>(
           listener: (context, state) {
             if (state is RaffleSynced) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Participantes sincronizados com sucesso!')),
-              );
+              showSnack(context, 'Participantes sincronizados com sucesso!');
             } else if (state is RaffleSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('🎉 Vencedor: ${state.winnerName}')),
-              );
+              showSnack(context, '🎉 Vencedor: ${state.winnerName}');
             } else if (state is RaffleEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Todos os participantes já foram sorteados.')),
-              );
+              showSnack(context, 'Todos os participantes já foram sorteados.');
             } else if (state is RaffleCleaned) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Banco de participantes limpo com sucesso.')),
-              );
+              showSnack(context, 'Banco de participantes limpo com sucesso.');
             } else if (state is RaffleError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              showSnack(context, state.message);
             }
           },
           builder: (context, state) {
             return Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.sync, size: 100, color: Colors.green),
-                  const SizedBox(height: 24),
+                  const Icon(Icons.emoji_events, size: 80, color: Colors.green),
+                  const SizedBox(height: 16),
                   const Text(
-                    'Sincronize os participantes da API\npara o banco local e inicie o sorteio!',
+                    'Gerencie os participantes do sorteio',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 32),
+
+                  // Botão: Sincronizar
                   ElevatedButton.icon(
                     onPressed: state is RaffleSyncing
                         ? null
@@ -75,7 +84,8 @@ class _RafflePageState extends State<RafflePage> {
                       state is RaffleSyncing ? 'Sincronizando...' : 'Sincronizar participantes',
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[700],
+                      backgroundColor: Colors.green[200],
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -83,7 +93,10 @@ class _RafflePageState extends State<RafflePage> {
                       textStyle: const TextStyle(fontSize: 16),
                     ),
                   ),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 16),
+
+                  // Botão: Sortear
                   ElevatedButton.icon(
                     onPressed: state is RaffleLoading
                         ? null
@@ -93,7 +106,8 @@ class _RafflePageState extends State<RafflePage> {
                       state is RaffleLoading ? 'Sorteando...' : 'Sortear participante',
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[800],
+                      backgroundColor: Colors.lightGreen[300],
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -101,13 +115,17 @@ class _RafflePageState extends State<RafflePage> {
                       textStyle: const TextStyle(fontSize: 16),
                     ),
                   ),
-                  const SizedBox(height: 20),
+
+                  const SizedBox(height: 16),
+
+                  // Botão: Limpar banco
                   ElevatedButton.icon(
                     onPressed: () => context.read<RaffleCubit>().limparBanco(),
-                    icon: const Icon(Icons.delete),
+                    icon: const Icon(Icons.delete_outline),
                     label: const Text('Limpar participantes'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[600],
+                      backgroundColor: Colors.red[100],
+                      foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -115,19 +133,21 @@ class _RafflePageState extends State<RafflePage> {
                       textStyle: const TextStyle(fontSize: 16),
                     ),
                   ),
-                  const SizedBox(height: 32),
+
+                  const SizedBox(height: 40),
+
                   if (state is RaffleSuccess)
                     Column(
                       children: [
                         const Text(
                           '🏆 Vencedor',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           state.winnerName,
                           style: TextStyle(
-                            fontSize: 26,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.green[900],
                           ),

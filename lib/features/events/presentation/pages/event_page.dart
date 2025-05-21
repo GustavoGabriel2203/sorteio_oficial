@@ -23,8 +23,11 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFEDF6F9),
       appBar: AppBar(
-        title: const Text('Evento'),
+        backgroundColor: Color(0xFFEDF6F9),
+        title: const Text('Eventos'),
+        centerTitle: true,
         automaticallyImplyLeading: false,
       ),
       body: BlocBuilder<EventCubit, EventState>(
@@ -69,10 +72,7 @@ class _EventPageState extends State<EventPage> {
                     child: Text(
                       'Toque para continuar para o menu',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                   ),
                   onTap: () {
