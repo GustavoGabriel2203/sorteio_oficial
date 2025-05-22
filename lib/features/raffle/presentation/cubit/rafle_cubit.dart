@@ -1,8 +1,9 @@
+import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/core/database/app_database.dart';
 import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
 import 'package:sorteio_oficial/core/entitys/customer_entity.dart';
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_state.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_state.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_state.dart';
 
@@ -85,8 +86,8 @@ class RaffleCubit extends Cubit<RaffleState> {
         return;
       }
 
-      unsorted.shuffle();
-      final sorteado = unsorted.first;
+      final randomIndex = Random().nextInt(unsorted.length);
+      final sorteado = unsorted[randomIndex];
 
       await customerDao.updateCustomerSorted(sorteado.id!);
 
@@ -94,7 +95,6 @@ class RaffleCubit extends Cubit<RaffleState> {
       await Future.delayed(const Duration(seconds: 4));
 
       emit(RaffleShowWinner(
-
         winnerName: sorteado.name,
         winnerPhone: sorteado.phone,
       ));

@@ -244,8 +244,9 @@ class _$CustomerDao extends CustomerDao {
   }
 
   @override
-  Future<void> insertCustomer(Customer customer) async {
-    await _customerInsertionAdapter.insert(customer, OnConflictStrategy.abort);
+  Future<int> insertCustomer(Customer customer) {
+    return _customerInsertionAdapter.insertAndReturnId(
+        customer, OnConflictStrategy.abort);
   }
 
   @override

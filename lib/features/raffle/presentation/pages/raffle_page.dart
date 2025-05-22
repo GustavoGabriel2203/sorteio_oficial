@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Adicionado
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_state.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_cubit.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_state.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
-import 'package:sorteio_oficial/features/draw/presentation/pages/raffle_loading_page.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/pages/raffle_loading_page.dart';
 
 class RafflePage extends StatefulWidget {
   const RafflePage({super.key});
@@ -78,7 +78,7 @@ class _RafflePageState extends State<RafflePage> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15.sp,
-                      color: const Color(0xFFB0B0B0),
+                      color: const Color(0xFFB0B0B0), 
                       fontWeight: FontWeight.w400,
                     ),
                   ),

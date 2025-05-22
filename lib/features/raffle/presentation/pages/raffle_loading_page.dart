@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Adicionado
 import 'package:lottie/lottie.dart';
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_state.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_cubit.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_state.dart';
 
 class RaffleLoadingPage extends StatefulWidget {
   const RaffleLoadingPage({super.key});

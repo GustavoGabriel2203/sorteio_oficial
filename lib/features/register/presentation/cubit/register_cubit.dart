@@ -13,12 +13,10 @@ class RegisterCubit extends Cubit<RegisterState> {
     required this.remoteService,
   }) : super(RegisterInitial());
 
-  // Método responsável por registrar um cliente localmente e sincronizar com a API
   Future<void> register(CustomerRegister customer) async {
-    emit(RegisterLoading()); // Mostra estado de carregamento na UI
+    emit(RegisterLoading());
 
     try {
-      // 1. Verifica se já existe um cliente com o mesmo e-mail para o mesmo evento
       final existing = await customerDao.validateIfCustomerAlreadyExists(
         customer.email,
         customer.event,
@@ -26,30 +24,34 @@ class RegisterCubit extends Cubit<RegisterState> {
 
       if (existing != null) {
         emit(RegisterError('Email já está em uso.'));
-        return; // Encerra aqui se já existe
+        return;
       }
 
-      // 2. Converte o modelo de registro para a entidade que será salva localmente
       final entity = customer.toEntity(
-        sorted: 0, // Ainda não foi sorteado
-        sync: 0,   // Ainda não está sincronizado
+        sorted: 0,
+        sync: 0,
       );
 
-      // 3. Salva o cliente no banco local com Floor
-      await customerDao.insertCustomer(entity);
+      final newId = await customerDao.insertCustomer(entity);
+      final localCustomer = await customerDao.getCustomerById(newId);
 
-      // 4. Tenta sincronizar todos os clientes desse evento com a API da 55tech
-      await remoteService.syncCustomers(customerDao, customer.event);
+      if (localCustomer == null) {
+        emit(RegisterError('Erro ao recuperar cliente salvo.'));
+        return;
+      }
 
-      // 5. Emite sucesso
+      final success = await remoteService.sendSingleCustomer(localCustomer);
+
+      if (!success) {
+        emit(RegisterError('Erro ao enviar para a API.'));
+        return;
+      }
+
       emit(RegisterSuccess());
 
-      // 6. Aguarda um tempo e reinicia o estado
       await Future.delayed(const Duration(seconds: 2));
       emit(RegisterInitial());
-
     } catch (e) {
-      // Em caso de erro inesperado
       emit(RegisterError('Erro inesperado ao registrar.'));
     }
   }

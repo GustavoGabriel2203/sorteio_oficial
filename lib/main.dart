@@ -22,7 +22,7 @@ import 'package:sorteio_oficial/features/register/presentation/cubit/register_cu
 import 'package:sorteio_oficial/features/events/presentation/cubit/event_cubit.dart';
 import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
-import 'package:sorteio_oficial/features/draw/presentation/cubit/rafle_cubit.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -4,7 +4,7 @@ import 'package:sorteio_oficial/core/entitys/customer_entity.dart';
 @dao
 abstract class CustomerDao {
   @insert
-  Future<void> insertCustomer(Customer customer);
+  Future<int> insertCustomer(Customer customer); 
 
   @update
   Future<void> updateCustomer(Customer customer);
@@ -13,7 +13,7 @@ abstract class CustomerDao {
   Future<List<Customer>> getCustomers();
 
   @Query('SELECT * FROM Customers WHERE id = :id')
-  Future<Customer?> getCustomerById(int id);
+  Future<Customer?> getCustomerById(int id); 
 
   @Query('SELECT * FROM Customers WHERE email = :email AND event = :eventId')
   Future<Customer?> validateIfCustomerAlreadyExists(String email, int eventId);

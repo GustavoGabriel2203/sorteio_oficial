@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sorteio_oficial/features/draw/presentation/pages/raffle_page.dart';
+import 'package:sorteio_oficial/features/raffle/presentation/pages/raffle_page.dart';
 import 'package:sorteio_oficial/features/events/presentation/pages/event_page.dart';
 import 'package:sorteio_oficial/features/menu/presentation/pages/menu_page.dart';
 import 'package:sorteio_oficial/features/participants/presentation/pages/participants_page.dart';
