@@ -27,7 +27,9 @@ class RREventService extends BaseEventService {
       final data = json.decode(response.body);
       return EventModel.fromJson(data['data']);
     } else {
-      throw Exception('Erro ao buscar evento ID $eventId: ${response.statusCode}');
+      throw Exception(
+        'Erro ao buscar evento ID $eventId: ${response.statusCode}',
+      );
     }
   }
 }
@@ -39,7 +41,11 @@ class RemoteEventService extends BaseEventService {
 
   @override
   Future<EventModel> fetchEventById(int eventId) async {
-    final uri = Uri.parse('$_baseUrl/$eventId');
+    final queryParameters = {
+      'filters[whitelabel][id][\$eq]': eventId.toString(),
+      'populate': '*',
+    };
+    final uri = Uri.parse(_baseUrl).replace(queryParameters: queryParameters);
 
     final response = await http.get(
       uri,
@@ -53,7 +59,9 @@ class RemoteEventService extends BaseEventService {
       final data = json.decode(response.body);
       return EventModel.fromJson(data['data']);
     } else {
-      throw Exception('Erro ao buscar evento ID $eventId: ${response.statusCode}');
+      throw Exception(
+        'Erro ao buscar evento ID $eventId: ${response.statusCode}',
+      );
     }
   }
 }

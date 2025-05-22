@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sorteio_oficial/core/database/app_database.dart';
 import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
 import 'package:sorteio_oficial/core/entitys/customer_entity.dart';
+import 'package:sorteio_oficial/core/usecases/usecase.dart';
+import 'package:sorteio_oficial/features/participants/domain/usecases/get_participants_remote_usecase.dart';
 import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_state.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_state.dart';
@@ -10,10 +12,12 @@ import 'package:sorteio_oficial/features/participants/presentation/cubit/partici
 class RaffleCubit extends Cubit<RaffleState> {
   final CustomerDao customerDao;
   final ParticipantCubit participantCubit;
+  final GetParticipantsRemoteUsecase getParticipantsRemoteUsecase;
 
   RaffleCubit({
     required this.customerDao,
     required this.participantCubit,
+    required this.getParticipantsRemoteUsecase,
   }) : super(RaffleInitial());
 
   static const String dbName = 'Customer_database.db';
@@ -37,22 +41,26 @@ class RaffleCubit extends Cubit<RaffleState> {
       }
 
       final eventId = whitelabel.id;
-      final remoteList = (participantCubit.state as ParticipantLoaded).participants;
+      final remoteList = await getParticipantsRemoteUsecase(NoParams());
 
-      final localList = remoteList.map((p) {
-        return Customer(
-          id: null,
-          name: p.name,
-          email: p.email,
-          phone: p.phone,
-          sorted: 0,
-          event: eventId,
-          sync: 1,
-        );
-      }).toList();
+      final localList =
+          remoteList.map((p) {
+            return Customer(
+              id: null,
+              name: p.name,
+              email: p.email,
+              phone: p.phone,
+              sorted: 0,
+              event: eventId,
+              sync: 1,
+            );
+          }).toList();
 
       for (final c in localList) {
-        final exists = await customerDao.validateIfCustomerAlreadyExists(c.email, c.event);
+        final exists = await customerDao.validateIfCustomerAlreadyExists(
+          c.email,
+          c.event,
+        );
         if (exists == null) {
           await customerDao.insertCustomer(c);
         }
@@ -79,7 +87,8 @@ class RaffleCubit extends Cubit<RaffleState> {
 
       final eventId = whitelabel.id;
       final all = await customerDao.getCustomers();
-      final unsorted = all.where((c) => c.sorted == 0 && c.event == eventId).toList();
+      final unsorted =
+          all.where((c) => c.sorted == 0 && c.event == eventId).toList();
 
       if (unsorted.isEmpty) {
         emit(RaffleEmpty());
@@ -94,10 +103,12 @@ class RaffleCubit extends Cubit<RaffleState> {
       emit(RaffleSuccess(winnerName: sorteado.name));
       await Future.delayed(const Duration(seconds: 4));
 
-      emit(RaffleShowWinner(
-        winnerName: sorteado.name,
-        winnerPhone: sorteado.phone,
-      ));
+      emit(
+        RaffleShowWinner(
+          winnerName: sorteado.name,
+          winnerPhone: sorteado.phone,
+        ),
+      );
     } catch (e) {
       emit(RaffleError('Erro ao sortear: ${e.toString()}'));
     }

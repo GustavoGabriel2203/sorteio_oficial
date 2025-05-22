@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +9,7 @@ import 'package:sorteio_oficial/config/routes/app_routes.dart';
 import 'package:sorteio_oficial/core/database/app_database.dart';
 import 'package:sorteio_oficial/core/database/dao/customer_dao.dart';
 import 'package:sorteio_oficial/core/database/dao/whitelabel_dao.dart';
+import 'package:sorteio_oficial/features/participants/domain/usecases/get_participants_remote_usecase.dart';
 
 // Repositórios e serviços
 import 'package:sorteio_oficial/features/register/data/repository/customer_registration.dart';
@@ -28,9 +28,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Inicializa o banco de dados Floor
-  final database = await $FloorAppDatabase
-      .databaseBuilder('Customer_database.db')
-      .build();
+  final database =
+      await $FloorAppDatabase.databaseBuilder('Customer_database.db').build();
 
   // Recupera os DAOs
   final customerDao = database.customerDao;
@@ -39,11 +38,13 @@ void main() async {
   // Instância do serviço de participantes com base no DAO
   final participantService = ParticipantService(whitelabelDao);
 
-  runApp(MyApp(
-    customerDao: customerDao,
-    whitelabelDao: whitelabelDao,
-    participantService: participantService,
-  ));
+  runApp(
+    MyApp(
+      customerDao: customerDao,
+      whitelabelDao: whitelabelDao,
+      participantService: participantService,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -64,38 +65,42 @@ class MyApp extends StatelessWidget {
       providers: [
         // Cubit para validação de whitelabel
         BlocProvider(
-          create: (_) => ValidatorCubit(
-            WhitelabelRepository(),
-            whitelabelDao,
-          ),
+          create: (_) => ValidatorCubit(WhitelabelRepository(), whitelabelDao),
         ),
 
         // Cubit para listar eventos da API
-        BlocProvider(
-          create: (_) => EventCubit(
-            RemoteEventService(),
-          ),
-        ),
+        BlocProvider(create: (_) => EventCubit(RemoteEventService())),
 
         // Cubit de cadastro de cliente
         BlocProvider(
-          create: (_) => RegisterCubit(
-            customerDao: customerDao,
-            remoteService: RemoteCustomerService(),
-          ),
+          create:
+              (_) => RegisterCubit(
+                customerDao: customerDao,
+                remoteService: RemoteCustomerService(),
+              ),
         ),
 
         // Cubit para listar participantes da API
         BlocProvider(
-          create: (_) => ParticipantCubit(participantService),
+          create:
+              (_) => ParticipantCubit(
+                participantService,
+                getParticipantsRemoteUsecase: GetParticipantsRemoteUsecase(
+                  participantService: participantService,
+                ),
+              ),
         ),
 
         // Cubit para lógica de sorteio (usa DAOs e participantCubit)
         BlocProvider(
-          create: (context) => RaffleCubit(
-            customerDao: customerDao,
-            participantCubit: context.read<ParticipantCubit>(),
-          ),
+          create:
+              (context) => RaffleCubit(
+                customerDao: customerDao,
+                participantCubit: context.read<ParticipantCubit>(),
+                getParticipantsRemoteUsecase: GetParticipantsRemoteUsecase(
+                  participantService: ParticipantService(whitelabelDao),
+                ),
+              ),
         ),
       ],
       child: ScreenUtilInit(
