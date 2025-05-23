@@ -62,7 +62,7 @@ class _ParticipantsPageState extends State<ParticipantsPage> {
                     border: Border.all(color: Colors.green.shade300, width: 1.2.w),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.green.withOpacity(0.2),
+                        color: Colors.green,
                         blurRadius: 6.r,
                         offset: const Offset(0, 2),
                       ),

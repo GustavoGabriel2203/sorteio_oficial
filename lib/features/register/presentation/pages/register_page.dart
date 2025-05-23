@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:sorteio_oficial/config/routes/app_routes.dart';
 import 'package:sorteio_oficial/core/lucid_validator/lucid_model.dart';
 import 'package:sorteio_oficial/core/lucid_validator/lucid_validator.dart';
 import 'package:sorteio_oficial/features/register/data/models/customer_register_model.dart';
 import 'package:sorteio_oficial/features/register/presentation/cubit/register_cubit.dart';
 import 'package:sorteio_oficial/features/register/presentation/cubit/register_state.dart';
 import 'package:sorteio_oficial/features/register/presentation/pages/decorationtextfield.dart';
-import 'package:sorteio_oficial/features/register/presentation/pages/register_sucess_page.dart';
 import 'package:sorteio_oficial/features/validator/presentation/cubit/validator_cubit.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -68,16 +68,10 @@ class _RegisterPageState extends State<RegisterPage> {
             child: BlocListener<RegisterCubit, RegisterState>(
               listener: (context, state) {
                 if (state is RegisterSuccess) {
+                  Navigator.pushNamed(context, AppRoutes.registerLoading);
+
                   nameController.clear();
                   emailController.clear();
-                  phoneController.clear();
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RegisterSuccessPage(),
-                    ),
-                  );
                 } else if (state is RegisterError) {
                   ScaffoldMessenger.of(
                     context,

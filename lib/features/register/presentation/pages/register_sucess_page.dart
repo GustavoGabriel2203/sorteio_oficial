@@ -17,7 +17,6 @@ class RegisterSuccessPage extends StatelessWidget {
             children: [
               Lottie.asset(
                 'assets/lottie/success.json', 
-                width: 200.w,
                 height: 200.h,
                 repeat: true,
               ),

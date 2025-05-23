@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Adicionado
+import 'package:sorteio_oficial/config/routes/app_routes.dart';
 import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_cubit.dart';
 import 'package:sorteio_oficial/features/raffle/presentation/cubit/rafle_state.dart';
 import 'package:sorteio_oficial/features/participants/presentation/cubit/participants_cubit.dart';
@@ -124,10 +125,7 @@ class _RafflePageState extends State<RafflePage> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const RaffleLoadingPage()),
-                        );
+                  Navigator.pushNamed(context, AppRoutes.raffleLoading);
                       },
                       icon: Icon(Icons.casino, color: Colors.white, size: 20.sp),
                       label: Text(
